@@ -11,7 +11,6 @@ export interface IMagazinePage {
 }
 
 export interface IMagazineProps {
-  sound?: boolean;
   images: string[];
 }
 

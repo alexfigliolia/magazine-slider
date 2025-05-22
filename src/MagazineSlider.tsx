@@ -1,11 +1,15 @@
+import { ForwardedRef, forwardRef } from "react";
 import { MagazineContextProvider } from "./Context";
 import { Magazine } from "./Magazine";
-import { IMagazineProps } from "./types";
+import { IMagazineContext, IMagazineProps } from "./types";
 
-export const MagazineSlider = (props: IMagazineProps) => {
+export const MagazineSlider = forwardRef(function MagazineSlider(
+  props: IMagazineProps,
+  ref: ForwardedRef<IMagazineContext>,
+) {
   return (
     <MagazineContextProvider>
-      <Magazine {...props} />
+      <Magazine ref={ref} {...props} />
     </MagazineContextProvider>
   );
-};
+});

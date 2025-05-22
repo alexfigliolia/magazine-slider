@@ -1,10 +1,23 @@
-import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ForwardedRef,
+  forwardRef,
+  use,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { MagazineContext } from "./Context";
 import { Page } from "./Page";
-import { IMagazinePage, IMagazineProps } from "./types";
+import { IMagazineContext, IMagazinePage, IMagazineProps } from "./types";
 
-export const Magazine = ({ images, sound }: IMagazineProps) => {
-  const { current } = use(MagazineContext);
+export const Magazine = forwardRef(function Magazine(
+  { images }: IMagazineProps,
+  ref: ForwardedRef<IMagazineContext>,
+) {
+  const { current, setCurrent } = use(MagazineContext);
   const [deferredPage, setDeferredPage] = useState(current);
   const slides = useMemo(() => compileImages(images), [images]);
   const length = useMemo(() => slides.length, [slides.length]);
@@ -37,12 +50,10 @@ export const Magazine = ({ images, sound }: IMagazineProps) => {
     };
   }, [current, goToPage]);
 
-  useEffect(() => {
-    if (sound) {
-      const pageTurn = new Audio("/page-flip.mp3");
-      void pageTurn.play();
-    }
-  }, [current, sound]);
+  useImperativeHandle(ref, () => ({ current, setCurrent }), [
+    current,
+    setCurrent,
+  ]);
 
   return (
     <group rotation-y={-Math.PI / 2}>
@@ -58,7 +69,7 @@ export const Magazine = ({ images, sound }: IMagazineProps) => {
       ))}
     </group>
   );
-};
+});
 
 function compileImages(images: string[]) {
   const photos: IMagazinePage[] = [];
