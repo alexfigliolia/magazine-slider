@@ -1,1 +1,0 @@
-export { MagazineSlider } from "./MagazineSlider";
