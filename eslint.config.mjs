@@ -1,37 +1,40 @@
 import { globalIgnores } from "eslint/config";
-import jsxA11y from "eslint-plugin-jsx-a11y";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import reactPlugin from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import tseslint from "typescript-eslint";
+import eslint from "@eslint/js";
 import ReactThree from "@react-three/eslint-plugin";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-export default [
-  globalIgnores([".next", "tsconfig.tsbuildinfo", "public"]),
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+export default tseslint.config(
+  globalIgnores(["dist", "tsconfig.tsbuildinfo"]),
+  eslint.configs.recommended,
+  tseslint.configs.stylisticTypeChecked,
+  tseslint.configs.strictTypeChecked,
+  reactPlugin.configs.flat.recommended,
+  reactPlugin.configs.flat["jsx-runtime"],
+  reactHooks.configs["recommended-latest"],
+  // importPlugin.flatConfigs.recommended,
   eslintPluginPrettierRecommended,
   {
     languageOptions: {
+      ...reactPlugin.configs.flat.recommended.languageOptions,
       parserOptions: {
         parser: tsParser,
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+      // globals: {
+      //   ...globals.serviceworker,
+      //   ...globals.browser,
+      // },
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
-      "jsx-a11y": jsxA11y,
       "simple-import-sort": simpleImportSort,
       "@react-three": ReactThree,
       "unused-imports": unusedImports,
@@ -44,7 +47,6 @@ export default [
     rules: {
       "no-undef": "off",
       "prettier/prettier": "error",
-      "@next/next/no-img-element": 0,
       "@typescript-eslint/ban-ts-comment": 0,
       "@typescript-eslint/no-explicit-any": 0,
       "@typescript-eslint/no-extraneous-class": 0,
@@ -72,7 +74,6 @@ export default [
       ],
       "react/no-unknown-property": 0,
       "unused-imports/no-unused-imports": "error",
-      "import/no-anonymous-default-export": 0,
     },
   },
-];
+);
